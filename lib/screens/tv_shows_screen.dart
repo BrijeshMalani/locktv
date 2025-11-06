@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:locktv/screens/search_screen.dart';
+import '../Utils/common.dart';
+import '../services/ad_manager.dart';
 import '../services/tmdb_api_service.dart';
 import '../models/tv_show.dart';
+import '../widgets/WorkingNativeAdWidget.dart';
 import '../widgets/tv_show_card.dart';
 import '../widgets/loading_widget.dart';
+import '../utils/animations.dart';
 
 class TVShowsScreen extends StatefulWidget {
   const TVShowsScreen({super.key});
@@ -78,7 +83,6 @@ class _TVShowsScreenState extends State<TVShowsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TV Shows'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -90,6 +94,27 @@ class _TVShowsScreenState extends State<TVShowsScreen>
         ),
       ),
       body: _buildBody(),
+      floatingActionButton: Container(
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        child: IconButton(
+          onPressed: () {
+            if (Common.adsopen == "2") {
+              Common.openUrl();
+            }
+            AdManager().showInterstitialAd();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchScreen()),
+            );
+          },
+          icon: Icon(Icons.search, color: Colors.white, size: 30),
+        ),
+      ),
+      bottomNavigationBar: const WorkingNativeAdWidget(),
     );
   }
 
@@ -116,19 +141,34 @@ class _TVShowsScreenState extends State<TVShowsScreen>
       child: GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.6,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisCount: 3,
+          childAspectRatio: 0.5,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
         ),
         itemCount: tvShows.length,
         itemBuilder: (context, index) {
           final tvShow = tvShows[index];
-          return TVShowCard(
-            tvShow: tvShow,
-            onTap: () {
-              Navigator.pushNamed(context, '/tv-details', arguments: tvShow.id);
-            },
+          return StaggeredAnimation(
+            index: index,
+            delay: const Duration(milliseconds: 50),
+            child: ScaleAnimation(
+              duration: Duration(milliseconds: 300 + (index % 10) * 30),
+              child: TVShowCard(
+                tvShow: tvShow,
+                onTap: () {
+                  if (Common.adsopen == "2") {
+                    Common.openUrl();
+                  }
+                  AdManager().showInterstitialAd();
+                  Navigator.pushNamed(
+                    context,
+                    '/tv-details',
+                    arguments: tvShow.id,
+                  );
+                },
+              ),
+            ),
           );
         },
       ),

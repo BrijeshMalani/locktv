@@ -861,6 +861,54 @@ class TMDBAPIService {
   }
 
   // Movie APIs
+  static Future<Map<String, dynamic>> getMoviePopular({
+    String language = 'en-US',
+    int page = 1,
+  }) async {
+    return await _makeRequestWithRetry(
+      () => http.get(
+        Uri.parse('$baseUrl/movie/popular?language=$language&page=$page'),
+        headers: _headers,
+      ),
+    );
+  }
+
+  static Future<Map<String, dynamic>> getMovieTopRated({
+    String language = 'en-US',
+    int page = 1,
+  }) async {
+    return await _makeRequestWithRetry(
+      () => http.get(
+        Uri.parse('$baseUrl/movie/top_rated?language=$language&page=$page'),
+        headers: _headers,
+      ),
+    );
+  }
+
+  static Future<Map<String, dynamic>> getMovieNowPlaying({
+    String language = 'en-US',
+    int page = 1,
+  }) async {
+    return await _makeRequestWithRetry(
+      () => http.get(
+        Uri.parse('$baseUrl/movie/now_playing?language=$language&page=$page'),
+        headers: _headers,
+      ),
+    );
+  }
+
+  static Future<Map<String, dynamic>> getMovieUpcoming({
+    String language = 'en-US',
+    int page = 1,
+  }) async {
+    return await _makeRequestWithRetry(
+      () => http.get(
+        Uri.parse('$baseUrl/movie/upcoming?language=$language&page=$page'),
+        headers: _headers,
+      ),
+    );
+  }
+
   static Future<Map<String, dynamic>> getAllMovies({
     int page = 1,
     String language = 'en-US',
@@ -1187,30 +1235,57 @@ class TMDBAPIService {
     required String personId,
     String language = 'en-US',
   }) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/person/$personId?language=$language'),
-      headers: _headers,
+    return await _makeRequestWithRetry(
+      () => http.get(
+        Uri.parse('$baseUrl/person/$personId?language=$language'),
+        headers: _headers,
+      ),
     );
-    return json.decode(response.body);
   }
 
   static Future<Map<String, dynamic>> getPersonMovieCredits({
     required String personId,
     String language = 'en-US',
   }) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/person/$personId/movie_credits?language=$language'),
-      headers: _headers,
+    return await _makeRequestWithRetry(
+      () => http.get(
+        Uri.parse('$baseUrl/person/$personId/movie_credits?language=$language'),
+        headers: _headers,
+      ),
     );
-    return json.decode(response.body);
   }
 
   static Future<Map<String, dynamic>> getPersonTVCredits({
     required String personId,
     String language = 'en-US',
   }) async {
+    return await _makeRequestWithRetry(
+      () => http.get(
+        Uri.parse('$baseUrl/person/$personId/tv_credits?language=$language'),
+        headers: _headers,
+      ),
+    );
+  }
+
+  static Future<Map<String, dynamic>> getPersonCombinedCredits({
+    required String personId,
+    String language = 'en-US',
+  }) async {
+    return await _makeRequestWithRetry(
+      () => http.get(
+        Uri.parse(
+          '$baseUrl/person/$personId/combined_credits?language=$language',
+        ),
+        headers: _headers,
+      ),
+    );
+  }
+
+  static Future<Map<String, dynamic>> getPersonImages({
+    required String personId,
+  }) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/person/$personId/tv_credits?language=$language'),
+      Uri.parse('$baseUrl/person/$personId/images'),
       headers: _headers,
     );
     return json.decode(response.body);

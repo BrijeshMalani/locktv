@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import '../Utils/common.dart';
+import '../services/ad_manager.dart';
 import '../services/tmdb_api_service.dart';
 import '../models/movie.dart';
 import '../models/tv_show.dart';
 import '../models/person.dart';
+import '../widgets/WorkingNativeAdWidget.dart';
 import '../widgets/movie_card.dart';
 import '../widgets/tv_show_card.dart';
 import '../widgets/person_card.dart';
+import '../utils/animations.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -88,7 +92,7 @@ class _SearchScreenState extends State<SearchScreen>
       appBar: AppBar(
         title: const Text('Search'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
+          preferredSize: const Size.fromHeight(130),
           child: Column(
             children: [
               // Search Bar
@@ -144,24 +148,37 @@ class _SearchScreenState extends State<SearchScreen>
                 _buildSearchResults(
                   'Movies',
                   searchMovies,
-                  (movie) => Navigator.pushNamed(
+                  (movie) {
+                    if (Common.adsopen == "2") {
+                      Common.openUrl();
+                    }
+                    AdManager().showInterstitialAd();
+                    return Navigator.pushNamed(
                     context,
                     '/movie-details',
                     arguments: movie.id,
-                  ),
+                  );
+                  },
                 ),
                 _buildSearchResults(
                   'TV Shows',
                   searchTVShows,
-                  (tvShow) => Navigator.pushNamed(
+                  (tvShow) {
+                    if (Common.adsopen == "2") {
+                      Common.openUrl();
+                    }
+                    AdManager().showInterstitialAd();
+                    return Navigator.pushNamed(
                     context,
                     '/tv-details',
                     arguments: tvShow.id,
-                  ),
+                  );
+                  },
                 ),
                 _buildPeopleResults(),
               ],
             ),
+      bottomNavigationBar: const WorkingNativeAdWidget(),
     );
   }
 
@@ -216,17 +233,24 @@ class _SearchScreenState extends State<SearchScreen>
       child: GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.6,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisCount: 3,
+          childAspectRatio: 0.5,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
         ),
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
-          return item is Movie
-              ? MovieCard(movie: item, onTap: () => onTap(item))
-              : TVShowCard(tvShow: item, onTap: () => onTap(item));
+          return StaggeredAnimation(
+            index: index,
+            delay: const Duration(milliseconds: 50),
+            child: ScaleAnimation(
+              duration: Duration(milliseconds: 300 + (index % 10) * 30),
+              child: item is Movie
+                  ? MovieCard(movie: item, onTap: () => onTap(item))
+                  : TVShowCard(tvShow: item, onTap: () => onTap(item)),
+            ),
+          );
         },
       ),
     );
@@ -258,19 +282,34 @@ class _SearchScreenState extends State<SearchScreen>
       child: GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.8,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisCount: 3,
+          childAspectRatio: 0.5,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
         ),
         itemCount: searchPeople.length,
         itemBuilder: (context, index) {
           final person = searchPeople[index];
-          return PersonCard(
-            person: person,
-            onTap: () {
-              // Navigate to person details
-            },
+          return StaggeredAnimation(
+            index: index,
+            delay: const Duration(milliseconds: 50),
+            child: ScaleAnimation(
+              duration: Duration(milliseconds: 300 + (index % 10) * 30),
+              child: PersonCard(
+                person: person,
+                onTap: () {
+                  if (Common.adsopen == "2") {
+                    Common.openUrl();
+                  }
+                  AdManager().showInterstitialAd();
+                  Navigator.pushNamed(
+                    context,
+                    '/person-details',
+                    arguments: person.id,
+                  );
+                },
+              ),
+            ),
           );
         },
       ),

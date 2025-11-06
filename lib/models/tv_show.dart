@@ -62,6 +62,25 @@ class TVShow {
 
   String get year =>
       firstAirDate.isNotEmpty ? firstAirDate.split('-')[0] : 'N/A';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'overview': overview,
+      'poster_path': posterPath,
+      'backdrop_path': backdropPath,
+      'first_air_date': firstAirDate,
+      'vote_average': voteAverage,
+      'vote_count': voteCount,
+      'genre_ids': genreIds,
+      'original_language': originalLanguage,
+      'original_name': originalName,
+      'origin_country': originCountry,
+      'popularity': popularity,
+      'media_type': mediaType,
+    };
+  }
 }
 
 class TVShowDetails extends TVShow {

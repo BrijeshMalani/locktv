@@ -62,6 +62,26 @@ class Movie {
       : 'https://via.placeholder.com/1280x720?text=No+Image';
 
   String get year => releaseDate.isNotEmpty ? releaseDate.split('-')[0] : 'N/A';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'overview': overview,
+      'poster_path': posterPath,
+      'backdrop_path': backdropPath,
+      'release_date': releaseDate,
+      'vote_average': voteAverage,
+      'vote_count': voteCount,
+      'adult': adult,
+      'original_language': originalLanguage,
+      'original_title': originalTitle,
+      'genre_ids': genreIds,
+      'popularity': popularity,
+      'video': video,
+      'media_type': mediaType,
+    };
+  }
 }
 
 class MovieDetails extends Movie {
@@ -179,8 +199,10 @@ class MovieDetails extends Movie {
       reviews: (json['reviews']?['results'] ?? [])
           .map<Review>((r) => Review.fromJson(r))
           .toList(),
-      watchProviders: json['watch/providers']?['results'] != null
-          ? WatchProviders.fromJson(json['watch/providers']['results'])
+      watchProviders:
+          json['watch_providers'] != null &&
+              json['watch_providers']['results'] != null
+          ? WatchProviders.fromJson(json['watch_providers']['results'])
           : null,
     );
   }

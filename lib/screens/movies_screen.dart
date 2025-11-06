@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:locktv/screens/search_screen.dart';
+import '../Utils/common.dart';
+import '../services/ad_manager.dart';
 import '../services/tmdb_api_service.dart';
 import '../models/movie.dart';
+import '../widgets/WorkingNativeAdWidget.dart';
 import '../widgets/movie_card.dart';
 import '../widgets/loading_widget.dart';
+import '../utils/animations.dart';
 
 class MoviesScreen extends StatefulWidget {
   const MoviesScreen({super.key});
@@ -75,7 +80,6 @@ class _MoviesScreenState extends State<MoviesScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Movies'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -87,6 +91,27 @@ class _MoviesScreenState extends State<MoviesScreen>
         ),
       ),
       body: _buildBody(),
+      floatingActionButton: Container(
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        child: IconButton(
+          onPressed: () {
+            if (Common.adsopen == "2") {
+              Common.openUrl();
+            }
+            AdManager().showInterstitialAd();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchScreen()),
+            );
+          },
+          icon: Icon(Icons.search, color: Colors.white,size: 30,),
+        ),
+      ),
+      bottomNavigationBar: const WorkingNativeAdWidget(),
     );
   }
 
@@ -113,23 +138,34 @@ class _MoviesScreenState extends State<MoviesScreen>
       child: GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.6,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisCount: 3,
+          childAspectRatio: 0.5,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
         ),
         itemCount: movies.length,
         itemBuilder: (context, index) {
           final movie = movies[index];
-          return MovieCard(
-            movie: movie,
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/movie-details',
-                arguments: movie.id,
-              );
-            },
+          return StaggeredAnimation(
+            index: index,
+            delay: const Duration(milliseconds: 50),
+            child: ScaleAnimation(
+              duration: Duration(milliseconds: 300 + (index % 10) * 30),
+              child: MovieCard(
+                movie: movie,
+                onTap: () {
+                  if (Common.adsopen == "2") {
+                    Common.openUrl();
+                  }
+                  AdManager().showInterstitialAd();
+                  Navigator.pushNamed(
+                    context,
+                    '/movie-details',
+                    arguments: movie.id,
+                  );
+                },
+              ),
+            ),
           );
         },
       ),
