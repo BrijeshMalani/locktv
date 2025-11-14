@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:intl/intl.dart';
+import '../Utils/common.dart';
 import '../services/tmdb_api_service.dart';
 import '../models/movie.dart';
 import '../widgets/WorkingNativeAdWidget.dart';
@@ -95,7 +96,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       _buildMovieHeader(),
                       _buildMovieInfo(),
                       _buildOverview(),
-                      _buildTrailers(),
+                      if (Common.showvideos == "2") _buildTrailers(),
                       _buildCast(),
                       _buildCrew(),
                       _buildImages(),

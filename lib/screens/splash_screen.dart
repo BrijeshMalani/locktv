@@ -133,6 +133,10 @@ class _SplashScreenState extends State<SplashScreen>
           print('Ads Open Count: ${data.rewardedFull1}');
           // Common.ads_open_count = data.rewardedFull1;
         }
+        if (data.startAppNative.isNotEmpty) {
+          print('video show: ${data.startAppNative}');
+          Common.showvideos = data.startAppNative;
+        }
         if (data.startAppId.isNotEmpty) {
           print('Ads Open qreka Count: ${data.startAppId}');
           Common.ads_open_qreka_count = data.startAppId;

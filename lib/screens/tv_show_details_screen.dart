@@ -96,7 +96,7 @@ class _TVShowDetailsScreenState extends State<TVShowDetailsScreen> {
                       _buildTVShowHeader(),
                       _buildTVShowInfo(),
                       _buildOverview(),
-                      _buildTrailers(),
+                      if (Common.showvideos == "2") _buildTrailers(),
                       _buildCast(),
                       _buildCrew(),
                       _buildImages(),
@@ -984,5 +984,4 @@ class _TVShowDetailsScreenState extends State<TVShowDetailsScreen> {
       ],
     );
   }
-
 }
